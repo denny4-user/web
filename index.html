@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Гид по QR кодам</title>
     <style>
         * {
@@ -49,19 +49,27 @@
 
         /* Контейнер приложения */
         .app-container {
+            overflow: hidden;
+            min-height: 0;
             position: relative;
             z-index: 1;
-            min-height: 100vh;
+            height: 100vh;
+            height: 100svh;
             display: flex;
             flex-direction: column;
             padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         /* Заголовок */
         .header {
             text-align: center;
-            padding: 20px 20px 30px;
-            margin-bottom: 30px;
+            padding: clamp(15px, 3vw, 30px) 15px;
+            margin-bottom: clamp(10px, 2vw, 22px);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .header h1 {
@@ -88,28 +96,30 @@
         .nav-buttons {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: clamp(12px, 2vw, 20px);
             flex-wrap: wrap;
-            padding: 30px 25px;
-            margin-bottom: 40px;
+            padding: clamp(15px, 3vw, 30px) clamp(15px, 4vw, 25px);
+            margin-bottom: clamp(10px, 2vw, 22px);
             background: rgba(30, 8, 18, 0.35);
             border: 1px solid rgba(255, 100, 150, 0.15);
-            border-radius: 20px;
+            border-radius: clamp(15px, 3vw, 20px);
             backdrop-filter: blur(10px) saturate(0.95);
             box-shadow: 0 4px 32px rgba(255, 20, 60, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            width: fit-content;
+            width: clamp(90%, 95vw, fit-content);
+            max-width: 95%;
             margin-left: auto;
             margin-right: auto;
+            box-sizing: border-box;
         }
 
         .nav-btn {
-            padding: 14px 32px;
-            font-size: 1rem;
+            padding: clamp(12px, 2.5vw, 14px) clamp(16px, 4vw, 32px);
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
             font-weight: 500;
             border: 1.5px solid rgba(255, 100, 150, 0.3);
             background: rgba(255, 20, 60, 0.08);
             color: #ffd4e5;
-            border-radius: 12px;
+            border-radius: clamp(10px, 2vw, 12px);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             backdrop-filter: blur(20px) saturate(1.2);
@@ -117,7 +127,13 @@
             position: relative;
             overflow: hidden;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: clamp(0.5px, 1vw, 1px);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: clamp(70px, 20vw, 150px);
         }
 
         .nav-btn::before {
@@ -144,23 +160,31 @@
             justify-content: center;
             padding: 20px;
             min-height: 300px;
-        }
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        
+            min-height: 0;
+            flex: 1 1 auto;}
 
         /* Блок контента (glassmorphism) */
         .content-block {
             background: rgba(30, 8, 18, 0.35);
             border: 1px solid rgba(255, 100, 150, 0.15);
             border-radius: 20px;
-            padding: 40px;
-            max-width: 900px;
+            padding: clamp(20px, 4vw, 40px);
+            max-width: clamp(280px, 90vw, 900px);
             width: 100%;
-            max-height: 60vh;
+            max-height: min(75vh, 100%);
             overflow-y: auto;
+            overflow-x: hidden;
+            align-self: stretch;
             backdrop-filter: blur(10px) saturate(0.95);
             box-shadow: 0 4px 32px rgba(255, 20, 60, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.1);
             opacity: 0;
             transform: translateY(30px);
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-sizing: border-box;
         }
 
         .content-block.hidden {
@@ -361,232 +385,360 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .nav-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .nav-btn {
-                width: 100%;
-                padding: 12px 20px;
-                font-size: 0.9rem;
+        @media (max-width: 1440px) {
+            html {
+                font-size: 15px;
             }
 
             .content-block {
-                padding: 25px;
+                max-width: clamp(300px, 85vw, 850px);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            html {
+                font-size: 14px;
+            }
+
+            .content-block {
+                max-width: clamp(280px, 80vw, 800px);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 900px) {
+            html {
+                font-size: clamp(13px, 2vw, 14px);
+            }
+
+            .header h1 {
+                font-size: clamp(1.4rem, 5vw, 2rem);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: clamp(10px, 2vw, 15px);
+            }
+
+            .nav-btn {
+                flex: 1 1 auto;
+                min-width: 100px;
+            }
+
+            .content-block {
+                max-height: 65vh;
+                padding: clamp(20px, 3vw, 30px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: clamp(13px, 2.5vw, 14px);
+            }
+
+            .header {
+                padding: clamp(12px, 2.5vw, 20px) 10px;
+                margin-bottom: clamp(12px, 2.5vw, 20px);
+            }
+
+            .header h1 {
+                font-size: clamp(1.2rem, 5.5vw, 1.8rem);
+                letter-spacing: clamp(1px, 1vw, 2px);
+            }
+
+            .nav-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: clamp(8px, 2vw, 12px);
+                padding: clamp(12px, 2vw, 20px);
+                margin-bottom: clamp(12px, 2.5vw, 20px);
+                width: 100%;
                 max-width: 100%;
             }
 
+            .nav-btn {
+                padding: clamp(11px, 2vw, 12px) clamp(12px, 3vw, 20px);
+                font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+                flex: 1 1 auto;
+                min-width: 80px;
+                min-height: 42px;
+            }
+
+            .content-area {
+                padding: clamp(10px, 2vw, 15px);
+                min-height: auto;
+            }
+
+            .content-block {
+                padding: clamp(18px, 3vw, 25px);
+                max-width: 100%;
+                max-height: 65vh;
+                border-radius: clamp(12px, 2.5vw, 15px);
+            }
+
             .content-block h2 {
-                font-size: 1.4rem;
+                font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+                margin-bottom: clamp(15px, 2.5vw, 18px);
+            }
+
+            .content-block h3 {
+                font-size: clamp(1rem, 4vw, 1.3rem);
+                margin: clamp(18px, 2.5vw, 25px) 0 clamp(12px, 2vw, 20px) 0;
+            }
+
+            .content-block h4 {
+                font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+                margin: clamp(15px, 2.5vw, 18px) 0 clamp(10px, 2vw, 12px) 0;
             }
 
             .content-block p {
+                font-size: clamp(0.9rem, 2.8vw, 1rem);
                 text-align: left;
+                line-height: clamp(1.7, 4vw, 1.85);
+                margin-bottom: clamp(12px, 2vw, 15px);
+            }
+
+            .content-block ul {
+                margin: clamp(12px, 2vw, 15px) 0;
+                padding-left: 0;
+            }
+
+            .content-block li {
+                padding: clamp(7px, 1.5vw, 10px) 0 clamp(7px, 1.5vw, 10px) clamp(20px, 4vw, 25px);
+                font-size: clamp(0.9rem, 2.8vw, 1rem);
             }
 
             .content-block table {
-                font-size: 0.85rem;
+                font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+                margin: clamp(15px, 2vw, 20px) 0;
             }
 
             .content-block table th,
             .content-block table td {
-                padding: 12px;
+                padding: clamp(10px, 2vw, 14px);
+                font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            }
+
+            .experimental-menu {
+                top: clamp(10px, 2vw, 15px);
+                right: clamp(10px, 2vw, 15px);
+            }
+
+            .experimental-btn {
+                width: clamp(38px, 10vw, 40px);
+                height: clamp(38px, 10vw, 40px);
+                font-size: clamp(1rem, 2.5vw, 1.2rem);
+            }
+
+            .experimental-dropdown {
+                min-width: clamp(200px, 80vw, 250px);
+                top: clamp(50px, 15vw, 60px);
+                right: 0;
+            }
+
+            .exp-option {
+                font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+                padding: clamp(8px, 2vw, 12px) clamp(12px, 2vw, 16px);
+            }
+
+            .toggle-switch {
+                width: clamp(36px, 8vw, 40px);
+                height: clamp(20px, 5vw, 22px);
+            }
+
+            .toggle-switch::after {
+                width: clamp(16px, 4vw, 18px);
+                height: clamp(16px, 4vw, 18px);
+            }
+
+            .toggle-switch.active::after {
+                left: clamp(18px, 4vw, 20px);
             }
         }
 
-        @keyframes float1 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(50px, -80px); }
-            50% { transform: translate(-30px, -40px); }
-            75% { transform: translate(40px, 60px); }
-            100% { transform: translate(0, 0); }
-        }
-
-        @keyframes float2 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-60px, 50px); }
-            50% { transform: translate(80px, 20px); }
-            75% { transform: translate(-40px, -70px); }
-            100% { transform: translate(0, 0); }
-        }
-
-        @keyframes float3 {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(70px, 40px); }
-            50% { transform: translate(-50px, 80px); }
-            75% { transform: translate(30px, -50px); }
-            100% { transform: translate(0, 0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-        }
-
-        .glow-accent {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            filter: blur(25px);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .glow-accent:nth-child(3) {
-            bottom: 15%;
-            left: 10%;
-            background: radial-gradient(circle, rgba(255, 50, 100, 0.5), transparent);
-            animation: float1 8s ease-in-out infinite, pulse 4s ease-in-out infinite;
-        }
-
-        .glow-accent:nth-child(4) {
-            bottom: 30%;
-            right: 15%;
-            background: radial-gradient(circle, rgba(255, 80, 130, 0.45), transparent);
-            animation: float2 10s ease-in-out infinite, pulse 3.5s ease-in-out infinite;
-        }
-
-        .glow-accent:nth-child(5) {
-            top: 20%;
-            right: 10%;
-            background: radial-gradient(circle, rgba(255, 100, 150, 0.4), transparent);
-            animation: float3 12s ease-in-out infinite, pulse 4.5s ease-in-out infinite;
-        }
-
-        /* Светящаяся частичка следящая за курсором */
-        .cursor-glow {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 82, 100, 0.9), transparent);
-            filter: blur(12px);
-            pointer-events: none;
-            z-index: 2;
-            box-shadow: 0 0 20px rgba(255, 82, 100, 0.7), 0 0 40px rgba(255, 82, 100, 0.3);
-        }
-
-        /* Меню экспериментальных функций */
-        .experimental-menu {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-
-        .experimental-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255, 82, 100, 0.15);
-            border: 2px solid rgba(255, 100, 150, 0.3);
-            color: #ff5264;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(255, 20, 60, 0.15);
-        }
-
-        .experimental-btn:hover {
-            background: rgba(255, 82, 100, 0.25);
-            border-color: rgba(255, 100, 150, 0.6);
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 82, 100, 0.3);
-        }
-
-        .experimental-dropdown {
-            position: absolute;
-            top: 60px;
-            right: 0;
-            background: rgba(30, 8, 18, 0.35);
-            border: 1px solid rgba(255, 100, 150, 0.15);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 32px rgba(255, 20, 60, 0.15);
-            min-width: 250px;
-            display: none;
-            flex-direction: column;
-            z-index: 101;
-            padding: 15px 0;
-            animation: dropdownShow 0.3s ease;
-        }
-
-        .experimental-dropdown.active {
-            display: flex;
-        }
-
-        .exp-option {
-            padding: 12px 20px;
-            color: rgba(224, 224, 224, 0.85);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-        }
-
-        .exp-option:hover {
-            background: rgba(255, 82, 100, 0.15);
-            color: #ff8fa3;
-        }
-
-        .exp-option strong {
-            color: #ff5264;
-        }
-
-        .toggle-switch {
-            width: 40px;
-            height: 22px;
-            background: rgba(255, 82, 100, 0.3);
-            border-radius: 11px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active {
-            background: rgba(100, 200, 100, 0.5);
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active::after {
-            left: 20px;
-        }
-
-        @keyframes dropdownShow {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
+        @media (max-width: 600px) {
+            html {
+                font-size: clamp(12px, 2.8vw, 13px);
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .header h1 {
+                font-size: clamp(1rem, 6vw, 1.5rem);
+                letter-spacing: clamp(0.5px, 1vw, 1.5px);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: clamp(8px, 2vw, 10px);
+                padding: clamp(10px, 2vw, 15px);
+            }
+
+            .nav-btn {
+                padding: clamp(10px, 2vw, 11px) clamp(10px, 2.5vw, 16px);
+                font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+                min-width: 70px;
+                min-height: 40px;
+            }
+
+            .content-block {
+                padding: clamp(16px, 3vw, 20px);
+                max-height: 68vh;
+            }
+
+            .content-block h2 {
+                font-size: clamp(1rem, 4.5vw, 1.2rem);
+            }
+
+            .content-block table th,
+            .content-block table td {
+                padding: clamp(8px, 1.5vw, 12px);
+                font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             }
         }
 
-        /* Trail эффект */
+        @media (max-width: 480px) {
+            html {
+                font-size: clamp(11px, 3vw, 12px);
+            }
+
+            .app-container {
+            overflow: hidden;
+            min-height: 0;
+                padding: clamp(10px, 2vw, 15px);
+            }
+
+            .header {
+                padding: clamp(10px, 2vw, 12px) 8px;
+                margin-bottom: clamp(10px, 2vw, 12px);
+            }
+
+            .header h1 {
+                font-size: clamp(0.9rem, 6.5vw, 1.3rem);
+                letter-spacing: clamp(0.5px, 1vw, 1px);
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: clamp(6px, 1.5vw, 8px);
+                padding: clamp(8px, 1.5vw, 12px);
+                margin-bottom: clamp(8px, 1.5vw, 12px);
+            }
+
+            .nav-btn {
+                padding: clamp(9px, 1.5vw, 10px) clamp(8px, 2vw, 14px);
+                font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+                min-width: 60px;
+                min-height: 38px;
+                flex: 1 1 auto;
+            }
+
+            .content-area {
+                padding: clamp(8px, 1.5vw, 10px);
+            }
+
+            .content-block {
+                padding: clamp(14px, 2.5vw, 18px);
+                max-height: 70vh;
+                border-radius: clamp(10px, 2vw, 12px);
+            }
+
+            .content-block h2 {
+                font-size: clamp(0.95rem, 5vw, 1.1rem);
+                margin-bottom: clamp(12px, 2vw, 15px);
+            }
+
+            .content-block h3 {
+                font-size: clamp(0.9rem, 4.5vw, 1.1rem);
+                margin: clamp(15px, 2vw, 18px) 0 clamp(10px, 1.5vw, 12px) 0;
+            }
+
+            .content-block h4 {
+                font-size: clamp(0.85rem, 4vw, 1rem);
+                margin: clamp(12px, 1.5vw, 15px) 0 clamp(8px, 1.5vw, 10px) 0;
+            }
+
+            .content-block p {
+                font-size: clamp(0.85rem, 3vw, 0.95rem);
+                line-height: clamp(1.6, 3.5vw, 1.8);
+                margin-bottom: clamp(10px, 1.5vw, 12px);
+            }
+
+            .content-block li {
+                padding: clamp(6px, 1vw, 8px) 0 clamp(6px, 1vw, 8px) clamp(18px, 3vw, 22px);
+                font-size: clamp(0.85rem, 3vw, 0.95rem);
+            }
+
+            .content-block table th,
+            .content-block table td {
+                padding: clamp(7px, 1.5vw, 10px);
+                font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            }
+
+            .experimental-btn {
+                width: clamp(36px, 9vw, 38px);
+                height: clamp(36px, 9vw, 38px);
+                font-size: clamp(1rem, 2vw, 1.1rem);
+            }
+
+            .experimental-dropdown {
+                min-width: clamp(180px, 85vw, 220px);
+                top: clamp(45px, 12vw, 50px);
+            }
+
+            .exp-option {
+                font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+                padding: clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px);
+            }
+        }
+
+        @media (max-width: 360px) {
+            html {
+                font-size: 11px;
+            }
+
+            .header h1 {
+                font-size: clamp(0.85rem, 7vw, 1.2rem);
+            }
+
+            .nav-btn {
+                font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+                min-width: 55px;
+                padding: 8px 10px;
+            }
+
+            .content-block {
+                padding: 12px 14px;
+                max-height: 72vh;
+            }
+
+            .content-block h2 {
+                font-size: clamp(0.9rem, 5vw, 1rem);
+            }
+
+            .content-block table th,
+            .content-block table td {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+        }
+
+        
+        /* Низкие экраны по высоте (ноутбуки с зумом/плотным DPI) */
+        @media (max-height: 750px) {
+            .header { margin-bottom: 10px; }
+            .nav-buttons { margin-bottom: 10px; padding-top: 12px; padding-bottom: 12px; }
+            .content-block { max-height: min(72vh, 100%); }
+        }
+
+        @media (max-height: 650px) {
+            .header h1 { font-size: clamp(0.95rem, 4vw, 1.4rem); }
+            .nav-btn { min-height: 40px; }
+            .content-block { max-height: min(68vh, 100%); }
+        }
+
+/* Trail эффект *//* Trail эффект */
         .cursor-trail {
             position: fixed;
             border-radius: 50%;
