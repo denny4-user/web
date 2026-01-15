@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Гид по QR кодам — liquid glass</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!-- Liquid Glass Settings widget -->
+<div id="lg-settings-root" aria-hidden="false">
+  <button id="lg-settings-btn" class="lg-settings-btn" aria-label="Настройки жидкого стекла" title="Настройки">
+    <!-- простой svg-gear -->
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zM19.43 12.98a7.5 7.5 0 0 0 0-1.96l2.12-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.5 1a7.6 7.6 0 0 0-1.7-.98l-.38-2.65A.5.5 0 0 0 13.4 2h-3a.5.5 0 0 0-.5.42l-.38 2.65a7.6 7.6 0 0 0-1.7.98l-2.5-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64L4.57 11a7.5 7.5 0 0 0 0 1.96L2.45 14.6a.5.5 0 0 0-.12.64l2 3.46c.13.22.4.3.62.22l2.5-1c.53.4 1.1.73 1.7.98l.38 2.65c.06.28.31.48.6.48h3c.29 0 .54-.2.6-.48l.38-2.65c.6-.25 1.17-.58 1.7-.98l2.5 1c.22.09.49 0 .62-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.12-1.62z"/>
+    </svg>
+  </button>
+
+  <aside id="lg-settings-panel" class="lg-settings-panel liquid-glass" role="dialog" aria-label="Настройки эффекта жидкого стекла" aria-hidden="true">
+    <header class="lg-settings-head">
+      <strong>Liquid glass — настройки</strong>
+      <button id="lg-close" class="lg-close" aria-label="Закрыть">✕</button>
+    </header>
+
+    <div class="lg-settings-body">
+      <div class="lg-row">
+        <label>Частота шума (baseFrequency)</label>
+        <input id="lg-freq" type="range" min="4" max="40" step="1" />
+        <div class="lg-value" id="lg-freq-value"></div>
+      </div>
+
+      <div class="lg-row">
+        <label>Размытие шума (stdDeviation)</label>
+        <input id="lg-blur" type="range" min="0" max="8" step="0.1" />
+        <div class="lg-value" id="lg-blur-value"></div>
+      </div>
+
+      <div class="lg-row">
+        <label>Сила искажения (displacement scale)</label>
+        <input id="lg-scale" type="range" min="0" max="120" step="1" />
+        <div class="lg-value" id="lg-scale-value"></div>
+      </div>
+
+      <div class="lg-row">
+        <label>Размытие стекла (CSS blur, px)</label>
+        <input id="lg-css-blur" type="range" min="0" max="30" step="0.5" />
+        <div class="lg-value" id="lg-css-blur-value"></div>
+      </div>
+
+      <div class="lg-row">
+        <label>Тинт (прозрачность белого)</label>
+        <input id="lg-tint" type="range" min="0" max="100" step="1" />
+        <div class="lg-value" id="lg-tint-value"></div>
+      </div>
+
+      <div class="lg-row">
+        <label>Внутренняя тень (inset, px)</label>
+        <input id="lg-inner" type="range" min="0" max="24" step="1" />
+        <div class="lg-value" id="lg-inner-value"></div>
+      </div>
+
+
+      <div class="lg-actions">
+        <button id="lg-reset" class="lg-btn">Сброс</button>
+
+      </div>
+
+
+    </div>
+  </aside>
+</div>
+
+<!-- START: inner-scroll-fallback -->
+<script>
+(function () {
+  const content = document.getElementById('content');
+  if (!content) return;
+
+  content.addEventListener('wheel', function(e) {
+    const delta = e.deltaY;
+    const atTop = content.scrollTop === 0;
+    const atBottom = Math.ceil(content.scrollTop + content.clientHeight) >= content.scrollHeight;
+    if ((delta < 0 && atTop) || (delta > 0 && atBottom)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  let startY = 0;
+  content.addEventListener('touchstart', function(e) {
+    if (e.touches && e.touches.length) startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  content.addEventListener('touchmove', function(e) {
+    if (!e.touches || !e.touches.length) return;
+    const y = e.touches[0].clientY;
+    const dy = y - startY;
+    const atTop = content.scrollTop === 0;
+    const atBottom = Math.ceil(content.scrollTop + content.clientHeight) >= content.scrollHeight;
+    if ((dy > 0 && atTop) || (dy < 0 && atBottom)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // keyboard support
+  content.setAttribute('tabindex', '0');
+  content.addEventListener('keydown', function(e) {
+    const key = e.key;
+    const step = Math.round(content.clientHeight * 0.9);
+    if (key === 'PageDown') { content.scrollBy({ top: step, behavior: 'smooth' }); e.preventDefault(); }
+    if (key === 'PageUp')   { content.scrollBy({ top: -step, behavior: 'smooth' }); e.preventDefault(); }
+    if (key === 'Home')     { content.scrollTo({ top: 0, behavior: 'smooth' }); e.preventDefault(); }
+    if (key === 'End')      { content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' }); e.preventDefault(); }
+    if (key === 'ArrowDown'){ content.scrollBy({ top: 40, behavior: 'smooth' }); e.preventDefault(); }
+    if (key === 'ArrowUp')  { content.scrollBy({ top: -40, behavior: 'smooth' }); e.preventDefault(); }
+  });
+})();
+</script>
+<!-- END: inner-scroll-fallback -->
+
+
+<body>
+  <!-- SVG filter (встроено в документ — позволяет ссылаться url(#liquid-glass-filter)) -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none;overflow:hidden;">
+    <defs>
+      <filter id="liquid-glass-filter" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.007 0.007" numOctaves="2" seed="92" result="noise"/>
+        <feGaussianBlur in="noise" stdDeviation="2" result="blurred"/>
+        <feDisplacementMap in="SourceGraphic" in2="blurred" scale="60" xChannelSelector="R" yChannelSelector="G" />
+        <!-- финальные бленды/композиты можно дополнять при желании -->
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="bg-container"></div>
+  <div class="overlay"></div>
+
+  <div class="app-container">
+    <header class="header">
+      <h1 class="title">QR-КОД МОШЕННИЧЕСТВО</h1>
+    </header>
+
+    <!-- nav-buttons теперь liquid glass -->
+    <div class="nav-buttons liquid-glass" data-lg>
+      <button class="nav-btn liquid-glass" data-lg onclick="showContent('guide')">ГИД</button>
+      <button class="nav-btn liquid-glass" data-lg onclick="showContent('help')">Я НЕ ПОНИМАЮ</button>
+      <button class="nav-btn liquid-glass" data-lg onclick="showContent('catalog')">Каталог UML</button>
+    </div>
+
+    <main class="content-area">
+  <!-- контент-блок — liquid glass, обёрнут в панель .bg-panel (панель НЕ скроллится) -->
+  <div class="bg-panel">
+    <article id="content" class="content-block liquid-glass hidden" data-lg>
+      <h2 id="content-title">Добро пожаловать</h2>
+      <div id="content-text">
+        <p>Выберите один из разделов сверху для начала работы.</p>
+      </div>
+    </article>
+  </div>
+</main>
+
+  </div>
+
+  <div id="cursorGlow" class="cursor-glow"></div>
+
+  <!-- ВАЖНО: здесь мы вставляем contentData и логику показа контента (адаптировано из ОБРАЗЕЦ.html) -->
+  <script>
+        const contentData = {
+            guide: {
+                title: 'ГИД',
+                text: '<h3>Примеры QR-мошенничества в России</h3><hr/><h4>Пример 1: Снятие денег со счета через QR-код банкомата</h4><p><strong>Описание схемы:</strong> Мошенники звонят под видом сотрудников банков и сообщают жертве о якобы несанкционированной попытке оформления кредита или неразрешенном запросе на снятие денег. Для отмены операции преступники просят клиента перейти в мобильное приложение своего банка, сгенерировать QR-код на определенную сумму и отправить скриншот. После получения кода мошенники снимают деньги в банкоматах, используя встроенную функцию "Снятие наличных по QR-коду". Центральный банк России подчеркивает, что код является личным поручением банку на выдачу средств.</p><p><strong>Источники:</strong> <a href="https://www.rbc.ru/finances/07/04/2023/642fc1659a7947173d24446f" target="_blank">РБК</a> — официальное сообщение Центрального Банка России от 6 апреля 2023 года и <a href="https://ria.ru" target="_blank">РИА Новости</a> — комментарии эксперта от 31 мая 2025 года.</p><hr/><h4>Пример 2: Фальшивые коды на сервисах проката (самокатах и велосипедах)</h4><p><strong>Описание схемы:</strong> Мошенники печатают собственные QR-коды и наклеивают их поверх оригинальных кодов на самокатах и велосипедах кикшеринг-сервисов. При сканировании поддельного кода пользователь попадает на поддельный сайт, имитирующий приложение сервиса проката. На фишинговой странице жертве предлагают оплатить аренду со скидкой через Систему быстрых платежей или криптовалюту. После перевода денег сайт пишет о якобы возникшей "ошибке", обещая возврат, однако аферисты переводят средства через цепочку подставных счетов.</p><p><strong>Источники:</strong> <a href="https://t-j.ru/qr-samokat/" target="_blank">T-Ж</a> — статья от 1 октября 2024 года, и <a href="https://ria.ru" target="_blank">РИА Новости</a> — официальное предупреждение МВД от 21 марта 2025 года.</p><hr/><h4>Пример 3: QR-коды в фишинг-объявлениях о государственных выплатах через "Госуслуги"</h4><p><strong>Описание схемы:</strong> Мошенники размещают в общественных местах фейковые объявления о гарантированных государственных социальных выплатах с QR-кодами. После сканирования кода жертва попадает на фишинговый сайт, который является точной копией портала "Госуслуги". Жертвам предлагают ввести персональные данные (фамилию, паспортную информацию, номер телефона), логин и пароль от аккаунта "Госуслуги", а некоторых даже просят код из SMS. С помощью украденного аккаунта мошенники получают доступ к различным услугам: запросам на получение субсидий, налоговых вычетов, регистрации ИП и другим государственным услугам.</p><p><strong>Источники:</strong> <a href="https://imho.press" target="_blank">ИМХО</a> — статья от 19 октября 2025 года с ссылкой на официальные данные пресс-центра МВД России.</p>'
+            },
+            help: {
+                title: 'Я НЕ ПОНИМАЮ',
+                text: '<h3>Таблица защиты для разных категорий пользователей</h3><table><thead><tr><th>Школьник (подросток)</th><th>Эксперт ИТ</th><th>Пожилой человек</th></tr></thead><tbody><tr><td><strong>QR-коды со скидками:</strong><br/>Если видишь в кафе или магазине QR код «скидка/бонус», не сканируй его просто ради интереса, особенно если наклейка выглядит криво или поверх другого кода. Сначала спроси у официанта или продавца: «Эта скидка настоящая? Можно получить её без QR кода, по карте или через приложение?». Если всё таки сканируешь, не спеши нажимать: посмотри, на какой сайт ведёт ссылка, и не вводи данные карты, логины и коды из SMS — лучше сразу закрыть страницу.</td><td><strong>QR-коды со скидками:</strong><br/>Подмена QR кода на стойке в офлайновой точке — классический кейс quishing и физической компрометации носителя: пользователь через подложный код уходит на фишинговый фронтенд, заточенный под кражу платёжных реквизитов и учётных данных ДБО. Рациональная стратегия: воспринимать любой «скидочный» QR как недоверенный входной канал, использовать только собственные доверенные точки входа — заранее сохранённые URL/приложения банка и ритейлера, проверять FQDN, сертификат и fingerprint, открывать ссылку в изолированном профиле/песочнице. Для платежей — никакого ввода PAN/CVV/OTP после перехода по QR.</td><td><strong>QR-коды со скидками:</strong><br/>Если где то в кафе или магазине висят «квадратики для скидки», не нужно их фотографировать и нажимать на появившиеся надписи. Скажите официанту или продавцу: «Если есть скидка, примените её сами, я заплачу как обычно — картой через терминал или наличными». Любая «скидка», ради которой нужно наводить телефон на неизвестный квадратик, может быть обманом.</td></tr><tr><td><strong>Объявления о выплатах:</strong><br/>Если видишь на улице или в школе объявление «госвыплаты», «пособия», «деньги от государства» с QR кодом — не верь на слово и не сканируй сразу. Государственные услуги удобнее и безопаснее проверять через официальное приложение «Госуслуги» или сайт, который ты открываешь сам. Если тема интересна, покажи объявление взрослым и договорись, что вы вместе проверите информацию на официальном сайте.</td><td><strong>Объявления о выплатах:</strong><br/>Во всех сценариях с «господдержкой/выплатами» через QR код речь идёт о таргетированном фишинге на бренд Госуслуг и госорганов. Оптимальный паттерн: полное игнорирование любых «инициатив снизу» как входной точки и жёсткий переход только через собственный доверенный путь — прямой ввод домена, проверка HTTPS/HSTS, отсутствие подозрительных редиректов. Рассматривать находки как IOC: собирать артефакты (URL, домен, сертификат), эскалировать в CERT, выстраивать policy по домашнему.</td><td><strong>Объявления о выплатах:</strong><br/>Если видите бумагу на подъезде, в поликлинике или в автобусе «Государство дарит выплаты, наведите телефон на квадратик» — не верьте этому и не наводите телефон. Если хотите узнать, положены ли вам какие то деньги, попросите детей, внуков или сотрудника МФЦ проверить это через официальный сайт. Запомните: всё, что обещает «легкие деньги по квадратику», чаще всего обман.</td></tr><tr><td><strong>QR-коды в мессенджерах:</strong><br/>Если кто то в мессенджере пишет, что он «из банка» или «админ сервиса» и просит отсканировать QR код для получения приза или скидки, просто не делай этого и не отправляй им скрины. Банк никогда не просит генерировать и пересылать QR коды в переписке. При сомнениях открой приложение банка сам и посмотри, есть ли там сообщения о проблемах.</td><td><strong>QR-коды в мессенджерах:</strong><br/>Звонок или сообщение «из банка/службы безопасности» с просьбой сгенерировать QR код «для отмены операции» — это комплексная social engineering TTP для удалённого cash out. Базовая модель реагирования: трактовать любой входящий канал как скомпрометированный, разорвать сессию, перейти в out of band канал — самостоятельный звонок по доверенному номеру или чат в приложении. Строгий запрет на генерацию и пересылку QR; при факте взаимодействия — рассматривать устройство как скомпрометированным, собирать артефакты.</td><td><strong>QR-коды в мессенджерах:</strong><br/>Если вам звонят и говорят: «Мы из банка, наведите телефон на квадратик или пришлите фотографию кода, чтобы спасти ваши деньги», просто положите трубку. Потом сами наберите номер банка с вашей карты или из книжки и спросите, всё ли в порядке. Так безопаснее, чем слушать незнакомого человека по телефону.</td></tr></tbody></table>'
+            },
+            catalog: {
+    title: 'Каталог UML',
+    text: `
+      <h3 style="text-align:center; margin-bottom:24px;">
+        Диаграммы системы мошенничества
+      </h3>
+
+      <div class="uml-gallery">
+        <img src="https://raw.githubusercontent.com/denny4-user/web/refs/heads/main/photo_2026-01-15_07-41-02.jpg" alt="UML диаграмма 1">
+        <img src="https://raw.githubusercontent.com/denny4-user/web/refs/heads/main/photo_2026-01-15_07-41-07.jpg" alt="UML диаграмма 2">
+        <img src="https://raw.githubusercontent.com/denny4-user/web/refs/heads/main/photo_2026-01-15_07-41-12.jpg" alt="UML диаграмма 3">
+        <img src="https://raw.githubusercontent.com/denny4-user/web/refs/heads/main/photo_2026-01-15_07-41-16.jpg" alt="UML диаграмма 4">
+      </div>
+    `
+}
+
+        };
+
+        let currentContent = null;
+
+        function showContent(section) {
+            const contentBlock = document.getElementById('content');
+            const contentTitle = document.getElementById('content-title');
+            const contentText = document.getElementById('content-text');
+
+            const scrollToTop = () => {
+                try {
+                    contentBlock.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch (e) {
+                    contentBlock.scrollTop = 0;
+                }
+            };
+
+            if (currentContent === section) {
+                scrollToTop();
+                return;
+            }
+
+            if (currentContent !== null) {
+                contentBlock.classList.add('hidden');
+                setTimeout(() => {
+                    updateContent(section, contentTitle, contentText, contentBlock);
+                    contentBlock.classList.remove('hidden');
+                    scrollToTop();
+                }, 300);
+            } else {
+                updateContent(section, contentTitle, contentText, contentBlock);
+                contentBlock.classList.remove('hidden');
+                scrollToTop();
+            }
+
+            currentContent = section;
+        }
+
+        function updateContent(section, titleEl, textEl, blockEl) {
+            const data = contentData[section];
+            titleEl.textContent = data.title;
+            textEl.innerHTML = data.text;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            showContent('guide');
+        });
+  </script>
+
+  <!-- Скрипты для эффекта курсора / экспериментальных функций (адаптированы) -->
+  <script>
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+        const cursorGlow = document.getElementById('cursorGlow');
+        const speed = 0.2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function createTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.width = '12px';
+            trail.style.height = '12px';
+            trail.style.left = x - 6 + 'px';
+            trail.style.top = y - 6 + 'px';
+            trail.style.opacity = '0.6';
+            document.body.appendChild(trail);
+
+            let opacity = 0.6;
+            const fadeInterval = setInterval(() => {
+                opacity -= 0.05;
+                trail.style.opacity = opacity;
+                if (opacity <= 0) {
+                    clearInterval(fadeInterval);
+                    trail.remove();
+                }
+            }, 30);
+        }
+
+        // Экспериментальные функции
+        let dynamicBgEnabled = false;
+        const expMenuBtn = document.getElementById('expMenuBtn');
+        const expDropdown = document.getElementById('expDropdown');
+        const dynamicBgToggle = document.getElementById('dynamicBgToggle');
+        const bgContainer = document.querySelector('.bg-container');
+
+        if (expMenuBtn) {
+          expMenuBtn.addEventListener('click', () => {
+              expDropdown.classList.toggle('active');
+          });
+        }
+        if (dynamicBgToggle) {
+          dynamicBgToggle.addEventListener('click', () => {
+              dynamicBgEnabled = !dynamicBgEnabled;
+              dynamicBgToggle.classList.toggle('active');
+
+              if (!dynamicBgEnabled) {
+                  bgContainer.style.transform = 'scale(1) translate(0, 0)';
+              }
+          });
+        }
+
+        function animateGlow() {
+            glowX += (mouseX - glowX) * speed;
+            glowY += (mouseY - glowY) * speed;
+
+            if (cursorGlow) {
+              cursorGlow.style.left = glowX - 10 + 'px';
+              cursorGlow.style.top = glowY - 10 + 'px';
+            }
+
+            // Динамический фон - параллакс эффект
+            if (dynamicBgEnabled && bgContainer) {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                const moveX = (mouseX - centerX) * 0.02;
+                const moveY = (mouseY - centerY) * 0.02;
+                bgContainer.style.transform = `scale(1.15) translate(${-moveX}px, ${-moveY}px)`;
+            }
+
+            if (Math.random() > 0.7) {
+                createTrail(glowX, glowY);
+            }
+
+            requestAnimationFrame(animateGlow);
+        }
+
+        animateGlow();
+  </script>
+</body>
+</html>
